@@ -1,0 +1,85 @@
+/*
+ * Design tokens. Values are the app's own existing slate + blue palette;
+ * this file names them, it does not introduce a new look.
+ */
+:root {
+  /* Color roles */
+  --color-text: #0f172a;
+  --color-text-body: #334155;      /* table cells, secondary body copy */
+  --color-text-muted: #64748b;     /* 4.8:1 on white, passes AA for body text */
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;  /* inputs, hover borders */
+  --color-surface: #ffffff;
+  --color-bg: #f8fafc;
+  --color-hover: #f1f5f9;
+  --color-primary: #2563eb;
+  --color-primary-strong: #1d4ed8;
+  --color-primary-tint: #eff6ff;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #dc2626;
+
+  /* Text-safe variants of the status colors (the base hues fail contrast as text) */
+  --color-success-text: #059669;
+  --color-warning-text: #ea580c;
+  --color-danger-text: #dc2626;
+
+  /* Soft status fills used by badges and the error banner */
+  --color-success-soft: #d1fae5;  --color-success-ink: #065f46;
+  --color-warning-soft: #fed7aa;  --color-warning-ink: #92400e;
+  --color-danger-soft: #fecaca;   --color-danger-ink: #991b1b;
+  --color-danger-wash: #fef2f2;
+  --color-info-soft: #dbeafe;     --color-info-ink: #1e40af;
+  --color-neutral-soft: #e0e7ff;  --color-neutral-ink: #3730a3;
+
+  /* Spacing: 4px base */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-7: 32px; --space-8: 48px;
+
+  /* Radius */
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px; --radius-pill: 9999px;
+
+  /* Elevation, by component role:
+     stat/KPI cards = shadow-card, chart/table panels = border only,
+     menus/popovers = shadow-raised, modals = shadow-overlay */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-raised: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-overlay: 0 20px 50px rgba(15, 23, 42, 0.15);
+
+  /* Type */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.875rem;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Layout */
+  --sidebar-width: 240px;
+  --sidebar-width-collapsed: 64px;
+  --content-max-width: 1600px;
+  --page-padding: var(--space-6);
+  --header-height: 0px; /* only a real value on mobile, where the slim top bar exists */
+
+  /* Modal widths (wave 2 adopts these) */
+  --modal-sm: 480px; --modal-md: 640px; --modal-lg: 900px;
+
+  /* Stacking: filter bar < mobile bar < scrim < sidebar/drawer < dropdowns inside sidebar */
+  --z-filters: 40;
+  --z-mobile-bar: 45;
+  --z-scrim: 60;
+  --z-sidebar: 70;
+
+  --focus-ring: 2px solid var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 56px;
+    --page-padding: var(--space-4);
+  }
+}

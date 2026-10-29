@@ -18,6 +18,7 @@ Use the Task tool with these specialized subagents for appropriate tasks:
 
 ### Skills
 - **backend-api-test** skill: Use when writing or modifying tests in `tests/backend` directory with pytest and FastAPI TestClient
+- **saas-sidebar-redesign** skill: Use when redesigning the Vue UI into a SaaS-style layout with a left sidebar, design tokens and consistent spacing
 
 ### MCP Tools
 - **ALWAYS use GitHub MCP tools** (`mcp__github__*`) for ALL GitHub operations
@@ -62,12 +63,15 @@ npm install && npm run dev
 4. Inventory filters don't support month (no time dimension)
 5. Revenue goals: $800K/month single, $9.6M YTD all months
 
+## Code Conventions
+- Always document non-obvious logic changes with comments (explain the *why*, not the *what*)
+
 ## File Locations
 - Views: `client/src/views/*.vue`
 - API Client: `client/src/api.js`
 - Backend: `server/main.py`, `server/mock_data.py`
 - Data: `server/data/*.json`
-- Styles: `client/src/App.vue`
+- Styles: `client/src/styles/` (`tokens.css` design tokens, `base.css` shared classes); shell layout in `client/src/App.vue` and `client/src/components/AppSidebar.vue`
 
 ## Design System
 - Colors: Slate/gray (#0f172a, #64748b, #e2e8f0)
