@@ -1,9 +1,16 @@
 <template>
-  <div class="language-switcher">
+  <div
+    ref="menuEl"
+    class="language-switcher"
+    @focusout="handleFocusOut"
+    @keydown.esc="handleEscape"
+  >
     <button
+      ref="triggerEl"
       class="language-button"
+      aria-haspopup="menu"
+      :aria-expanded="String(isDropdownOpen)"
       @click="toggleDropdown"
-      @blur="handleBlur"
     >
       <svg
         width="20"
@@ -11,6 +18,7 @@
         viewBox="0 0 20 20"
         fill="none"
         class="globe-icon"
+        aria-hidden="true"
       >
         <circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/>
         <path d="M3 10H17" stroke="currentColor" stroke-width="1.5"/>
@@ -21,6 +29,7 @@
       <svg
         class="chevron"
         :class="{ 'chevron-open': isDropdownOpen }"
+        aria-hidden="true"
         width="16"
         height="16"
         viewBox="0 0 16 16"
@@ -30,13 +39,15 @@
       </svg>
     </button>
 
-    <div v-if="isDropdownOpen" class="dropdown-menu">
+    <div v-if="isDropdownOpen" class="dropdown-menu" role="menu">
       <button
         v-for="locale in availableLocales"
         :key="locale"
         class="dropdown-item"
         :class="{ active: currentLocale === locale }"
-        @mousedown.prevent="selectLanguage(locale)"
+        role="menuitem"
+        @mousedown.prevent
+        @click="selectLanguage(locale)"
       >
         <span class="language-name">{{ getLanguageName(locale) }}</span>
         <svg
@@ -46,6 +57,7 @@
           viewBox="0 0 18 18"
           fill="none"
           class="check-icon"
+          aria-hidden="true"
         >
           <path d="M4 9L7.5 12.5L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -61,6 +73,8 @@ import { useI18n } from '../composables/useI18n'
 const { currentLocale, setLocale, availableLocales, localeName } = useI18n()
 
 const isDropdownOpen = ref(false)
+const menuEl = ref(null)
+const triggerEl = ref(null)
 
 const languageNames = {
   en: 'English',
@@ -75,11 +89,17 @@ const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
 }
 
-const handleBlur = () => {
-  // Delay to allow mousedown events on dropdown items to fire first
-  setTimeout(() => {
-    isDropdownOpen.value = false
-  }, 200)
+// Close only when focus leaves the whole menu container. The old 200ms blur timer closed
+// the menu before keyboard users could Tab to and activate an item.
+const handleFocusOut = (e) => {
+  if (menuEl.value && menuEl.value.contains(e.relatedTarget)) return
+  isDropdownOpen.value = false
+}
+
+const handleEscape = () => {
+  if (!isDropdownOpen.value) return
+  isDropdownOpen.value = false
+  triggerEl.value?.focus()
 }
 
 const selectLanguage = (locale) => {

@@ -193,6 +193,9 @@ defineExpose({
   left: 0;
   width: min(var(--sidebar-width), 85vw);
   transform: translateX(-100%);
+  /* The slot is display:contents (no stacking context), so --z-sidebar must live on the aside
+     itself; otherwise the later-in-DOM scrim paints over the drawer and swallows nav taps. */
+  z-index: var(--z-sidebar);
 }
 .sidebar.mode-mobile.open {
   transform: translateX(0);
@@ -206,8 +209,10 @@ defineExpose({
   z-index: -1; /* below the aside within the slot's stacking context */
 }
 .sidebar-slot.mode-mobile .scrim {
-  /* slot is display:contents, so the scrim joins the root context and needs its own layer */
-  z-index: calc(var(--z-sidebar) - 1);
+  /* slot is display:contents, so the scrim joins the root context and needs its own layer;
+     --z-scrim (60) sits below the drawer's --z-sidebar (70). Tablet overlay is unaffected: there the
+     slot is a real stacking context and the scrim's z-index:-1 already sits under the aside. */
+  z-index: var(--z-scrim);
 }
 
 .sidebar-top {
