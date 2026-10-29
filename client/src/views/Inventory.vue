@@ -225,91 +225,71 @@ export default {
 </script>
 
 <style scoped>
-.page-header {
-  margin-bottom: 1.5rem;
-}
-
-.page-header h2 {
-  margin-bottom: 0.25rem;
-}
-
-.page-header p {
-  color: #64748b;
-  font-size: 0.875rem;
-}
-
+/* .page-header, .card, .card-title, .loading, .error and table styles come from styles/base.css.
+   Only the search toolbar and clickable rows are view-specific. */
 .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.card-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #0f172a;
-  margin: 0;
+  gap: var(--space-4);
+  flex-wrap: wrap; /* search box drops under the title in a narrow main area */
 }
 
 .search-box {
   position: relative;
   display: flex;
   align-items: center;
-  min-width: 300px;
+  flex: 0 1 300px;
+  min-width: 200px;
 }
 
 .search-icon {
   position: absolute;
-  left: 0.75rem;
+  left: var(--space-3);
   width: 18px;
   height: 18px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   pointer-events: none;
 }
 
 .search-input {
   width: 100%;
-  padding: 0.5rem 2.5rem 0.5rem 2.5rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  color: #0f172a;
-  background: #f8fafc;
-  transition: all 0.2s;
+  /* 40px side padding: room for the 18px icon / clear button (between space-7 and space-8, kept exact) */
+  padding: var(--space-2) 40px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px var(--color-primary-tint);
 }
 
 .search-input::placeholder {
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 
 .clear-search {
   position: absolute;
-  right: 0.5rem;
+  right: var(--space-2);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem;
+  padding: var(--space-1);
   background: transparent;
   border: none;
-  border-radius: 4px;
-  color: #94a3b8;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .clear-search:hover {
-  background: #e2e8f0;
-  color: #64748b;
+  background: var(--color-border);
+  color: var(--color-text);
 }
 
 .clear-search svg {
@@ -317,23 +297,12 @@ export default {
   height: 18px;
 }
 
-.loading,
-.error {
-  padding: 2rem;
-  text-align: center;
-  color: #64748b;
-}
-
-.error {
-  color: #ef4444;
-}
-
 .clickable-row {
   cursor: pointer;
-  transition: background-color 0.15s ease;
 }
 
-.clickable-row:hover {
-  background: #eff6ff !important;
+/* Beats the shared tbody tr:hover specificity-wise without !important */
+tbody tr.clickable-row:hover {
+  background: var(--color-primary-tint);
 }
 </style>

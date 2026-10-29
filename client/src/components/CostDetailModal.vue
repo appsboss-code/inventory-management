@@ -150,25 +150,28 @@ const close = () => {
 </script>
 
 <style scoped>
+/* Modal tier: radius-lg + shadow-overlay, width from --modal-* tokens. */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5); /* slate-tinted scrim, was pure black */
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
-  padding: 1rem;
+  z-index: 2000; /* above the sidebar (--z-sidebar 70); no modal token exists */
+  padding: var(--space-4);
+  /* Per-category colors; violet has no token (no violet in the palette), declared once. */
+  --series-procurement: var(--color-primary);
+  --series-operational: #8b5cf6;
+  --series-labor: var(--color-success);
+  --series-overhead: var(--color-warning);
 }
 
 .modal-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-  max-width: 600px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-overlay);
+  max-width: var(--modal-md); /* was 600px; nearest step */
   width: 100%;
   max-height: 90vh;
   overflow: hidden;
@@ -180,188 +183,153 @@ const close = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #0f172a;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
   letter-spacing: -0.025em;
 }
 
 .close-button {
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--color-text-muted);
   cursor: pointer;
-  padding: 0.5rem;
+  padding: var(--space-2);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  transition: all 0.15s ease;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .close-button:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--color-hover);
+  color: var(--color-text);
 }
 
 .modal-body {
   flex: 1;
   overflow-y: auto;
-  padding: 2rem;
+  padding: var(--space-6);
 }
 
-.cost-summary {
-  margin-bottom: 2rem;
-}
+.cost-summary { margin-bottom: var(--space-6); }
 
+/* Solid tinted surface with a full border; replaces the blue gradient block */
 .summary-card {
-  padding: 1.5rem;
-  border-radius: 10px;
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
   text-align: center;
 }
 
 .summary-card.total {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
+  background: var(--color-primary-tint);
+  border: 1px solid var(--color-info-soft);
+  color: var(--color-info-ink);
 }
 
 .summary-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.9;
-  margin-bottom: 0.5rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-2);
 }
 
 .summary-value {
   font-size: 2.25rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .cost-breakdown {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-3);
 }
 
+/* Full four-sided border + tint derived from each series color (no hex, no single edge) */
 .cost-item {
-  padding: 1.25rem;
-  border-radius: 10px;
-  border: 2px solid;
+  --series: var(--color-primary);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--series) 35%, var(--color-surface));
+  background: color-mix(in srgb, var(--series) 8%, var(--color-surface));
 }
 
-.cost-item.procurement {
-  border-color: #93c5fd;
-  background: #eff6ff;
-}
-
-.cost-item.operational {
-  border-color: #c4b5fd;
-  background: #f5f3ff;
-}
-
-.cost-item.labor {
-  border-color: #86efac;
-  background: #f0fdf4;
-}
-
-.cost-item.overhead {
-  border-color: #fcd34d;
-  background: #fffbeb;
-}
+.cost-item.procurement { --series: var(--series-procurement); }
+.cost-item.operational { --series: var(--series-operational); }
+.cost-item.labor { --series: var(--series-labor); }
+.cost-item.overhead { --series: var(--series-overhead); }
 
 .cost-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
 }
 
 .cost-icon {
   width: 48px;
   height: 48px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  background: var(--series);
+  color: var(--color-surface);
 }
 
-.cost-item.procurement .cost-icon {
-  background: #3b82f6;
-  color: white;
-}
-
-.cost-item.operational .cost-icon {
-  background: #8b5cf6;
-  color: white;
-}
-
-.cost-item.labor .cost-icon {
-  background: #10b981;
-  color: white;
-}
-
-.cost-item.overhead .cost-icon {
-  background: #f59e0b;
-  color: white;
-}
-
-.cost-info {
-  flex: 1;
-}
+.cost-info { flex: 1; }
 
 .cost-name {
-  font-weight: 600;
-  color: #0f172a;
-  font-size: 1rem;
-  margin-bottom: 0.25rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-1);
 }
 
 .cost-amount {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #0f172a;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
 }
 
 .cost-percentage {
-  font-size: 0.875rem;
-  color: #64748b;
-  font-weight: 500;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
 }
 
 .modal-footer {
-  padding: 1.5rem;
-  border-top: 1px solid #e2e8f0;
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: flex-end;
 }
 
 .btn-secondary {
-  padding: 0.625rem 1.25rem;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  color: #334155;
+  padding: var(--space-2) var(--space-5); /* was 10px 20px; 10px between space-2 and space-3 */
+  background: var(--color-hover);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-body);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
   font-family: inherit;
 }
 
 .btn-secondary:hover {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
+  background: var(--color-border);
+  border-color: var(--color-border-strong);
 }
 
-/* Modal transition animations */
+/* Modal transition animations (global reduced-motion rule in base.css shortens these) */
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.2s ease;

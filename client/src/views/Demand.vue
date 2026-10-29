@@ -226,42 +226,37 @@ export default {
 <style scoped>
 .demand-trend-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); /* min() keeps it from overflowing a narrow main area */
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
 }
 
+/* KPI tier: radius-md + shadow-card (matches .stat-card) */
 .trend-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1.5rem;
-  transition: all 0.2s ease;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .trend-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-raised);
 }
 
-.increasing-card {
-  border-left: 4px solid #10b981;
-}
-
-.stable-card {
-  border-left: 4px solid #3b82f6;
-}
-
-.decreasing-card {
-  border-left: 4px solid #ef4444;
-}
+/* Semantic accent is a full 4-sided border (was a 4px left stripe) */
+.increasing-card { border-color: var(--color-success-soft); }
+.stable-card { border-color: var(--color-info-soft); }
+.decreasing-card { border-color: var(--color-danger-soft); }
 
 .trend-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #f1f5f9;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-hover);
 }
 
 .trend-icon {
@@ -270,100 +265,79 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   flex-shrink: 0;
 }
 
-.increasing-card .trend-icon {
-  background: #d1fae5;
-  color: #059669;
-}
+.increasing-card .trend-icon { background: var(--color-success-soft); color: var(--color-success-text); }
+.stable-card .trend-icon { background: var(--color-info-soft); color: var(--color-primary); }
+/* was #fee2e2; snapped to the danger-soft token (#fecaca) */
+.decreasing-card .trend-icon { background: var(--color-danger-soft); color: var(--color-danger-text); }
 
-.stable-card .trend-icon {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
-.decreasing-card .trend-icon {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
+/* Sentence case (was uppercase + tracking) */
 .trend-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
 }
 
 .trend-count {
   font-size: 1.5rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-top: 0.25rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-top: var(--space-1);
 }
 
 .trend-items {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .trend-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  background: #f8fafc;
-  border-radius: 6px;
-  transition: background 0.2s;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s;
 }
 
 .trend-item:hover {
-  background: #f1f5f9;
+  background: var(--color-hover);
 }
 
 .item-name {
-  font-size: 0.875rem;
-  color: #0f172a;
-  font-weight: 500;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
   flex: 1;
+  min-width: 0; /* allow ellipsis inside the flex row */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-right: 1rem;
+  margin-right: var(--space-4);
 }
 
 .item-change {
-  font-size: 0.813rem;
-  font-weight: 700;
+  font-size: var(--font-size-xs); /* was 0.813rem; nearest step */
+  font-weight: var(--font-weight-bold);
   flex-shrink: 0;
 }
 
-.increasing-card .item-change {
-  color: #059669;
-}
-
-.stable-card .item-change {
-  color: #3b82f6;
-}
-
-.decreasing-card .item-change {
-  color: #dc2626;
-}
-
-.item-change.neutral {
-  color: #64748b;
-}
+.increasing-card .item-change { color: var(--color-success-text); }
+.stable-card .item-change { color: var(--color-primary); }
+.decreasing-card .item-change { color: var(--color-danger-text); }
+.item-change.neutral { color: var(--color-text-muted); }
 
 .more-items {
-  font-size: 0.813rem;
-  color: #64748b;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
   font-style: italic;
   text-align: center;
-  padding: 0.5rem;
+  padding: var(--space-2);
 }
 </style>

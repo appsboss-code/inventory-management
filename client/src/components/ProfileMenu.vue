@@ -1,9 +1,16 @@
 <template>
-  <div class="profile-menu">
+  <div
+    ref="menuEl"
+    class="profile-menu"
+    @focusout="handleFocusOut"
+    @keydown.esc="handleEscape"
+  >
     <button
+      ref="triggerEl"
       class="profile-button"
+      aria-haspopup="menu"
+      :aria-expanded="String(isDropdownOpen)"
       @click="toggleDropdown"
-      @blur="handleBlur"
     >
       <div class="avatar">
         {{ getInitials(currentUser.name) }}
@@ -12,6 +19,7 @@
       <svg
         class="chevron"
         :class="{ 'chevron-open': isDropdownOpen }"
+        aria-hidden="true"
         width="16"
         height="16"
         viewBox="0 0 16 16"
@@ -21,7 +29,7 @@
       </svg>
     </button>
 
-    <div v-if="isDropdownOpen" class="dropdown-menu">
+    <div v-if="isDropdownOpen" class="dropdown-menu" role="menu">
       <div class="dropdown-header">
         <div class="avatar-large">
           {{ getInitials(currentUser.name) }}
@@ -36,9 +44,11 @@
 
       <button
         class="dropdown-item"
-        @mousedown.prevent="showProfileDetails"
+        role="menuitem"
+        @mousedown.prevent
+        @click="showProfileDetails"
       >
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
           <path d="M9 9C10.6569 9 12 7.65685 12 6C12 4.34315 10.6569 3 9 3C7.34315 3 6 4.34315 6 6C6 7.65685 7.34315 9 9 9Z" stroke="currentColor" stroke-width="1.5"/>
           <path d="M15 15C15 12.7909 12.3137 11 9 11C5.68629 11 3 12.7909 3 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
@@ -47,9 +57,11 @@
 
       <button
         class="dropdown-item"
-        @mousedown.prevent="showTasks"
+        role="menuitem"
+        @mousedown.prevent
+        @click="showTasks"
       >
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
           <path d="M15 3H3C2.44772 3 2 3.44772 2 4V14C2 14.5523 2.44772 15 3 15H15C15.5523 15 16 14.5523 16 14V4C16 3.44772 15.5523 3 15 3Z" stroke="currentColor" stroke-width="1.5"/>
           <path d="M6 7L8 9L12 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -61,9 +73,11 @@
 
       <button
         class="dropdown-item logout"
-        @mousedown.prevent="handleLogout"
+        role="menuitem"
+        @mousedown.prevent
+        @click="handleLogout"
       >
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
           <path d="M7 15H4C3.44772 15 3 14.5523 3 14V4C3 3.44772 3.44772 3 4 3H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           <path d="M11 12L15 9M15 9L11 6M15 9H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -82,6 +96,8 @@ const { currentUser, logout, getInitials } = useAuth()
 const { t } = useI18n()
 
 const isDropdownOpen = ref(false)
+const menuEl = ref(null)
+const triggerEl = ref(null)
 const emit = defineEmits(['show-profile-details', 'show-tasks'])
 
 const pendingTaskCount = computed(() => {
@@ -92,11 +108,17 @@ const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
 }
 
-const handleBlur = () => {
-  // Delay to allow mousedown events on dropdown items to fire first
-  setTimeout(() => {
-    isDropdownOpen.value = false
-  }, 200)
+// Close only when focus leaves the whole menu container. The old 200ms blur timer closed
+// the menu before keyboard users could Tab to and activate an item.
+const handleFocusOut = (e) => {
+  if (menuEl.value && menuEl.value.contains(e.relatedTarget)) return
+  isDropdownOpen.value = false
+}
+
+const handleEscape = () => {
+  if (!isDropdownOpen.value) return
+  isDropdownOpen.value = false
+  triggerEl.value?.focus()
 }
 
 const showProfileDetails = () => {
@@ -123,82 +145,119 @@ const handleLogout = () => {
 .profile-button {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  padding: 0.5rem 0.875rem;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
 }
 
 .profile-button:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--color-bg);
+  border-color: var(--color-border-strong);
 }
 
 .avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xs);
   letter-spacing: 0.025em;
 }
 
 .profile-name {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #0f172a;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.profile-name {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chevron {
-  color: #64748b;
+  color: var(--color-text-muted);
   transition: transform 0.2s ease;
-}
-
-.chevron-open {
+  flex-shrink: 0;
+  /* The menu opens upward, so the closed state points up and flips down when open */
   transform: rotate(180deg);
 }
 
+.chevron-open {
+  transform: rotate(0deg);
+}
+
+/* The trigger lives at the bottom of the sidebar, so the menu opens upward
+   (a downward menu would run off the viewport). It is wider than the 240px
+   sidebar and extends over the page, which is fine: nothing clips it. */
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
+  bottom: calc(100% + var(--space-2));
+  left: 0;
   min-width: 280px;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
   z-index: 1000;
   overflow: hidden;
 }
 
+/* Icon rail (64px): avatar-only trigger; menu opens sideways to the right of the rail. */
+:global(.sidebar.railed) .profile-button {
+  justify-content: center;
+  padding: var(--space-1);
+}
+:global(.sidebar.railed) .profile-name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+:global(.sidebar.railed) .chevron {
+  display: none;
+}
+:global(.sidebar.railed) .dropdown-menu {
+  bottom: 0;
+  left: calc(100% + var(--space-3));
+}
+
 .dropdown-header {
-  padding: 1rem;
+  padding: var(--space-4);
   display: flex;
-  gap: 0.875rem;
+  gap: var(--space-3);
   align-items: center;
-  background: #f8fafc;
+  background: var(--color-bg);
 }
 
 .avatar-large {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-md);
   letter-spacing: 0.025em;
   flex-shrink: 0;
 }
@@ -209,15 +268,15 @@ const handleLogout = () => {
 }
 
 .user-name {
-  font-weight: 600;
-  color: #0f172a;
-  font-size: 0.938rem;
-  margin-bottom: 0.25rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-1);
 }
 
 .user-email {
-  font-size: 0.813rem;
-  color: #64748b;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -225,56 +284,56 @@ const handleLogout = () => {
 
 .dropdown-divider {
   height: 1px;
-  background: #e2e8f0;
-  margin: 0.5rem 0;
+  background: var(--color-border);
+  margin: var(--space-2) 0;
 }
 
 .dropdown-item {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   background: none;
   border: none;
   text-align: left;
   cursor: pointer;
   transition: background 0.15s ease;
   font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #334155;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-body);
 }
 
 .dropdown-item:hover {
-  background: #f8fafc;
+  background: var(--color-bg);
 }
 
 .dropdown-item svg {
-  color: #64748b;
+  color: var(--color-text-muted);
   flex-shrink: 0;
 }
 
 .dropdown-item.logout {
-  color: #dc2626;
+  color: var(--color-danger-text);
 }
 
 .dropdown-item.logout svg {
-  color: #dc2626;
+  color: var(--color-danger-text);
 }
 
 .dropdown-item.logout:hover {
-  background: #fef2f2;
+  background: var(--color-danger-wash);
 }
 
 .task-badge {
   margin-left: auto;
-  background: #2563eb;
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.125rem 0.5rem;
-  border-radius: 12px;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-1) var(--space-2); /* was 2px 8px; nearest step */
+  border-radius: var(--radius-pill);
   min-width: 20px;
   text-align: center;
 }
